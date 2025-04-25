@@ -12,6 +12,7 @@ cadastros['3deelira@gmail.com'] = {
 }
 caronas['3deelira@gmail.com'] = {
                         'Carona1' : {
+                        'Motorista' : 'Alisson Lira',
                         'Origem' : 'cajazeiras',
                         'Destino': 'joão pessoa',
                         'Data' : '20/06/2025',
@@ -126,6 +127,7 @@ while menu != 0:
                     valor_passageiro = float(input('Digite o valor para cada passageiro: R$ '))           
 
                     nova_carona = {
+                        'Motorista' : cadastros[login]['nome'],
                         'Origem' : origem,
                         'Destino': destino,
                         'Data' : data,
@@ -286,6 +288,45 @@ while menu != 0:
                         print('\nVocê não tem carona cadastrada!')
                         break
 
+# detalhes da carona
+
+                elif sub_menu == 7:
+                    
+                    email_motorista = input('\nDigite o email do motorista: ').lower()
+                    data_carona = input('Digite a data da carona: ').lower()
+                    carona_existente = False
+
+                    for motorista in caronas:
+                        lista_caronas = caronas[motorista]
+
+                        for id_carona in lista_caronas:
+                            carona = lista_caronas[id_carona]
+
+                            if carona['Data'] == data_carona and email_motorista == motorista:
+                                print(f'\nCarona encontrada!\n')
+                                print(f'Motorista: {carona['Motorista']}')
+                                print(f'Origem: {carona['Origem']}')
+                                print(f'Destino: {carona['Destino']}')
+                                print(f'Data: {carona['Data']}')
+                                print(f'Horário: {carona['Horário']}')
+                                print(f'Vagas: {carona['Vagas']}')
+                                print(f'Valor: R$ {carona['Valor']:.2f}\n')
+                                print(f'Reservas: {carona['Reservas']}\n')
+                                carona_existente = True
+
+                    if not carona_existente:
+                        print('Carona não encontrada!')
+
+                    sub_menu = 99
+                    break
+
+# mostrar caronas do usuário logado
+
+                elif sub_menu == 8:
+                    if login in caronas:
+                        print(caronas[login])
+                    else:
+                        print('Nenhuma carona cadastrada!')
 
 # logout
                 elif sub_menu == 10:
