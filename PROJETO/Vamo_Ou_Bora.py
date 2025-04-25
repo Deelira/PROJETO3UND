@@ -10,7 +10,7 @@ cadastros['3deelira@gmail.com'] = {
                 'nome': 'alisson lira',
                 'senha': 'deelira123',
 }
-caronas['2deelira@gmail.com'] = {
+caronas['3deelira@gmail.com'] = {
                         'Carona1' : {
                         'Origem' : 'cajazeiras',
                         'Destino': 'joão pessoa',
@@ -262,6 +262,32 @@ while menu != 0:
                         print('\nEmail ou data inválido!')
                         break
                 
+# cancelar carona
+
+                elif sub_menu == 6:
+                    data_encontrada = False
+                    cancelar = input('Digite a data da carona que deseja cancelar: ').lower()
+
+                    if login in caronas:
+                        lista_caronas_existentes = caronas[login]
+
+                        for id_carona in lista_caronas_existentes:
+                            if lista_caronas_existentes[id_carona]['Data'] == cancelar:
+                                data_encontrada = True
+                                break
+
+                        if data_encontrada:
+                            caronas[login].pop(id_carona)
+                            print('\nCarona cancelada com sucesso!')
+                            break
+                        else:
+                            print('\nCarona não encontrada!')
+                    else:
+                        print('\nVocê não tem carona cadastrada!')
+                        break
+
+
+# logout
                 elif sub_menu == 10:
                         logado = False
                         menu = 99
