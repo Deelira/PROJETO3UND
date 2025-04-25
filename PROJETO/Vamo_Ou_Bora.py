@@ -326,10 +326,11 @@ while menu != 0:
                     if login in caronas:
                         print(caronas[login])
                     else:
-                        print('Nenhuma carona cadastrada!')
-
+                        print('\nNenhuma carona cadastrada!\n')
+                    break
 # logout
                 elif sub_menu == 10:
+                        print('\nVocê foi desconectado!\n')
                         logado = False
                         menu = 99
                         break
