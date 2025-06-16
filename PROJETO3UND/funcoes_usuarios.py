@@ -498,7 +498,6 @@ def relatorio_totalizador(caronas,login):
                 return
         
         total_geral = 0
-        total = 0
 
         print(f'\n Olá, {login}, estas são suas caronas cadastradas:\n')
         for carona_id in caronas[login]:
@@ -515,10 +514,10 @@ def relatorio_totalizador(caronas,login):
                 print(f'Vagas totais: {caronas[login][carona_id]['Vagas']}')
                 print(f'Vagas ocupadas: {ocupado}')
                 print(f'Vagas restantes: {disponiveis}')
-                print(f'Total a receber: R$ {total:.2f}')
+                print(f'Total a receber: R$ {resultado:.2f}')
                 print('----------------------------------------')
 
-                total_geral += total
+                total_geral += resultado
 
         print(f'\nTotal a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
         salvar_relatorio(caronas,login)
@@ -533,7 +532,6 @@ def salvar_relatorio(caronas,login):
 
         if salvar == 's':
                 total_geral = 0
-                total = 0
                 
                 with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatorio.txt', 'a') as arquivo:
 
@@ -552,10 +550,10 @@ def salvar_relatorio(caronas,login):
                                 arquivo.write(f'Vagas totais: {caronas[login][carona_id]['Vagas']}\n')
                                 arquivo.write(f'Vagas ocupadas: {ocupado}\n')
                                 arquivo.write(f'Vagas restantes: {disponiveis}\n')
-                                arquivo.write(f'Total a receber: R$ {total:.2f}\n')
+                                arquivo.write(f'Total a receber: R$ {resultado:.2f}\n')
                                 arquivo.write('----------------------------------------\n')
 
-                                total_geral += total
+                                total_geral += resultado
 
                         arquivo.write(f'Total a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
                         print('Relatório salvo com sucesso!')
