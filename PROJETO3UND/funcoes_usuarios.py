@@ -464,3 +464,4 @@ def salvar_relatorio(caronas,login):
 
                         arquivo.write(f'\nTotal a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
                         print('Relatório salvo com sucesso!')
+                        

@@ -127,3 +127,4 @@ while menu == 'start':
 
     if menu == '0':
         print('\nValeu, até a próxima carona!')
+        
