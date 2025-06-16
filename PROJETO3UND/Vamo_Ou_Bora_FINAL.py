@@ -120,7 +120,6 @@ while menu == 'start':
                 if sub_menu not in sub_menu_validos:
                     print('\nDigite uma opção válida!')
         else:
-            print('Voltando ao menu principal...')
             menu = 'start'
 
     if menu == '3':

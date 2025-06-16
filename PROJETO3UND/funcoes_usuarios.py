@@ -3,6 +3,7 @@ PACOTE UTILIZADO PARA FUNÇÕES DE USUÁRIO
 
 VALIDAR SENHA, VALIDAR E-MAIL...
 '''
+import os 
 
 def validar_nome(nome):
         nome = nome.strip()
@@ -80,7 +81,7 @@ def cadastrar_usuario(usuarios, arquivo_usuarios):
                 }
         with open(arquivo_usuarios, 'a') as f:
                 linha = (f'{email_cadastro},{nome},{senha}\n')
-                arquivo_usuarios.write(linha)
+                f.write(linha)
 
         print('\nTudo certo, cadastro efetuado com sucesso!\n')
 
@@ -100,7 +101,7 @@ def login(usuarios,menu):
                 print('Login realizado com sucesso!')
                 return login
         else:    
-                print('Desculpe, email ou senha inválidos.\n \nTente novamente ou digite "voltar" para voltar ao menu inicial.')
+                print('\nDesculpe, email ou senha inválidos.')
 
 
 def cadastrar_carona(caronas,usuarios,login):
@@ -397,11 +398,11 @@ def importar_usuarios(usuarios):
         return 'start'
 
 def relatorio_totalizador(caronas,login):
-        
         if login not in caronas or not caronas[login]:
                 print('Não há caronas cadastradas!')
                 return
         
+        total_geral = 0
         total = 0
 
         print(f'\n Olá, {login}, estas são suas caronas cadastradas:\n')
@@ -423,14 +424,22 @@ def relatorio_totalizador(caronas,login):
                 print('----------------------------------------')
 
                 total_geral += total
+
         print(f'\nTotal a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
         salvar_relatorio(caronas,login)
 
 def salvar_relatorio(caronas,login):
+
         salvar = input('\nDeseja salvar o relatório? (S)(N) ').lower()
 
+        pasta = r'E:\Algorítimo e Lógica de programação\Phyton\relatorio'
+        if not os.path.exists(pasta):
+                os.makedirs(pasta)
+
         if salvar == 's':
+                total_geral = 0
                 total = 0
+                
                 with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatio.txt', 'w') as arquivo:
 
                         arquivo.write(f'\n Olá, {login}, estas são suas caronas cadastradas:\n')
