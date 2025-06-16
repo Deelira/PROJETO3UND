@@ -1,0 +1,14 @@
+
+ Olá, 3deelira@gmail.com, estas são suas caronas cadastradas:
+Carona: Carona1
+Origem: cajazeiras
+Destino: joão pessoa
+Data: 20/06/2025
+Horário: 16:30
+Valor por vaga: R$ 100.0
+Vagas totais: 3
+Vagas ocupadas: 0
+Vagas restantes: 3
+Total a receber: R$ 0.00
+----------------------------------------
+Total a receber por caronas oferecidas: R$ 0.00

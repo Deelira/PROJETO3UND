@@ -432,7 +432,7 @@ def salvar_relatorio(caronas,login):
 
         salvar = input('\nDeseja salvar o relatório? (S)(N) ').lower()
 
-        pasta = r'E:\Algorítimo e Lógica de programação\Phyton\relatorio'
+        pasta = 'E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio'
         if not os.path.exists(pasta):
                 os.makedirs(pasta)
 
@@ -440,7 +440,7 @@ def salvar_relatorio(caronas,login):
                 total_geral = 0
                 total = 0
                 
-                with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatio.txt', 'w') as arquivo:
+                with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatorio.txt', 'w') as arquivo:
 
                         arquivo.write(f'\n Olá, {login}, estas são suas caronas cadastradas:\n')
                         for carona_id in caronas[login]:
@@ -448,20 +448,19 @@ def salvar_relatorio(caronas,login):
                                 disponiveis = caronas[login][carona_id]['Vagas'] - ocupado
                                 resultado = caronas[login][carona_id]['Valor'] * ocupado
 
-                                arquivo.write(f'Carona: {carona_id}')
-                                arquivo.write(f'Origem: {caronas[login][carona_id]['Origem']}')
-                                arquivo.write(f'Destino: {caronas[login][carona_id]['Destino']}')
-                                arquivo.write(f'Data: {caronas[login][carona_id]['Data']}')
-                                arquivo.write(f'Horário: {caronas[login][carona_id]['Horário']}')
-                                arquivo.write(f'Valor por vaga: R$ {caronas[login][carona_id]['Valor']}')
-                                arquivo.write(f'Vagas totais: {caronas[login][carona_id]['Vagas']}')
-                                arquivo.write(f'Vagas ocupadas: {ocupado}')
-                                arquivo.write(f'Vagas restantes: {disponiveis}')
-                                arquivo.write(f'Total a receber: R$ {total:.2f}')
-                                arquivo.write('----------------------------------------')
+                                arquivo.write(f'Carona: {carona_id}\n')
+                                arquivo.write(f'Origem: {caronas[login][carona_id]['Origem']}\n')
+                                arquivo.write(f'Destino: {caronas[login][carona_id]['Destino']}\n')
+                                arquivo.write(f'Data: {caronas[login][carona_id]['Data']}\n')
+                                arquivo.write(f'Horário: {caronas[login][carona_id]['Horário']}\n')
+                                arquivo.write(f'Valor por vaga: R$ {caronas[login][carona_id]['Valor']}\n')
+                                arquivo.write(f'Vagas totais: {caronas[login][carona_id]['Vagas']}\n')
+                                arquivo.write(f'Vagas ocupadas: {ocupado}\n')
+                                arquivo.write(f'Vagas restantes: {disponiveis}\n')
+                                arquivo.write(f'Total a receber: R$ {total:.2f}\n')
+                                arquivo.write('----------------------------------------\n')
 
                                 total_geral += total
 
-                        arquivo.write(f'\nTotal a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
+                        arquivo.write(f'Total a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
                         print('Relatório salvo com sucesso!')
-                        
