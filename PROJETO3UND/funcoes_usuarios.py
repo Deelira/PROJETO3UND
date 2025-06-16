@@ -104,7 +104,7 @@ def login(usuarios,menu):
                 print('\nDesculpe, email ou senha inválidos.')
 
 
-def cadastrar_carona(caronas,usuarios,login):
+def cadastrar_carona(caronas,usuarios,login,arquivo_caronas):
         print('\nDigite "voltar" para ser redirecionado ao menu')
 
         origem = input('\nQual a origem da sua carona? ').lower()
@@ -164,30 +164,52 @@ def cadastrar_carona(caronas,usuarios,login):
                 caronas[login] = dict()
         id_carona = (f'carona{len(caronas[login]) + 1}')
         caronas[login][id_carona] = nova_carona
+
+        salvar_caronas(caronas, arquivo_caronas)
+
         print('\nNova carona cadastrada com sucesso!\n')
         return nova_carona
 
-def listar_caronas(caronas):
-        caronas_disponiveis = dict()
+def salvar_caronas(caronas, arquivo_caronas):
+        with open(arquivo_caronas, 'w', encoding='utf-8') as f:
+                for email_motorista in caronas:
+                        for id_carona in caronas[email_motorista]:
+                                c = caronas[email_motorista][id_carona]
+
+                                reservas_str = ""
+                                for email_res in c['Reservas']:
+                                        nome_res = c['Reservas'][email_res]
+                                        reservas_str += f"{email_res}:{nome_res};"
+
+                                reservas_str = reservas_str.rstrip(';')
+                                linha = f"{email_motorista},{c['Motorista']},{c['Origem']},{c['Destino']},{c['Data']},{c['Horário']},{c['Vagas']},{c['Valor']},{reservas_str}\n"
+                                f.write(linha)
+
+def listar_caronas(arquivo_caronas):
+        caronas = importar_caronas(arquivo_caronas)
+        encontrou_carona = False
+
         for motorista in caronas:
-                for id in caronas[motorista]:
-                        if caronas[motorista][id]['Vagas'] > 0:
-                                caronas_disponiveis = caronas[motorista]
-                        if (len(caronas_disponiveis)) > 0:
-                                for carona in caronas_disponiveis:
-                                        print('\n')
-                                        print(f'Motorista : {caronas_disponiveis[carona]['Motorista']}')
-                                        print(f'Origem : {caronas_disponiveis[carona]['Origem']}')
-                                        print(f'Destino : {caronas_disponiveis[carona]['Destino']}')
-                                        print(f'Data : {caronas_disponiveis[carona]['Data']}')
-                                        print(f'Hora : {caronas_disponiveis[carona]['Horário']}')
-                                        print(f'Vagas : {caronas_disponiveis[carona]['Vagas']}')
-                                        print(f'Valor R$: {caronas_disponiveis[carona]['Valor']}')
-                                        print(f'Reservas: {caronas_disponiveis[carona]['Reservas']}')
-                                        print(f'Para reservar vaga, anote o email do motorista: {motorista}')
-                                        print('\n')
-                        else:
-                                print('\nInfelizmente não temos carona disponível no momento')
+                caronas_do_motorista = caronas[motorista]
+                for id_carona in caronas_do_motorista:
+                        dados = caronas_do_motorista[id_carona]
+                        if dados['Vagas'] > 0:
+                                encontrou_carona = True
+                                print('\n==================== CARONA DISPONÍVEL ====================')
+                                print(f'Motorista : {dados["Motorista"]}')
+                                print(f'Origem : {dados["Origem"]}')
+                                print(f'Destino : {dados["Destino"]}')
+                                print(f'Data : {dados["Data"]}')
+                                print(f'Horário : {dados["Horário"]}')
+                                print(f'Vagas : {dados["Vagas"]}')
+                                print(f'Valor R$: {dados["Valor"]:.2f}')
+                                if len(dados['Reservas']) > 0:
+                                        print(f'Reservas: {dados["Reservas"]}')
+                                print(f'Email do motorista para reserva: {motorista}')
+                                print('============================================================\n')
+
+        if not encontrou_carona:
+                print('\nInfelizmente não há caronas disponíveis no momento.\n')    
 
 def bucar_por_origem(caronas):
         encontrada = False
@@ -211,66 +233,135 @@ def bucar_por_origem(caronas):
         if not encontrada:
                 print('\nInfelizmente não encontramos nenhuma carona compatível.')
 
-def reservar_vaga(caronas,login,historico_passageiros,usuarios):
-        print('\nDigite "voltar" para ser redirecionado ao menu\n')
-        email_motorista = input('Digite o email do motorista o qual você deseja pegar carona: ').lower()
+def reservar_vaga(caronas, login, usuarios, arquivo_caronas):
+        print('\nDigite "voltar" a qualquer momento para retornar ao menu')
+
+        email_motorista = input('Digite o email do motorista para reservar a carona: ').lower()
         if email_motorista == 'voltar':
                 return
-        data_carona_reservar = input('Digite a data da carona (dd/mm/aaaa):  ').lower()
-        if data_carona_reservar == 'voltar':
+
+        data_carona = input('Digite a data da carona: (dd/mm/aaaa) ').lower()
+        if data_carona == 'voltar':
                 return
-        if len(data_carona_reservar) < 9 or data_carona_reservar[2] != '/' and data_carona_reservar[5] != '/':
-                        print('\nFormato de data inválida!')
-        elif email_motorista in caronas:
-                        for id in caronas[email_motorista]:
-                                if data_carona_reservar == caronas[email_motorista][id]['Data']:
-                                        if caronas[email_motorista][id]['Vagas'] > 0:
-                                                reserva_id = (f'reserva{len(caronas[email_motorista][id]["Reservas"]) + 1}')
-                                                caronas[email_motorista][id]['Reservas'][reserva_id] = usuarios[login]['nome']
-                                                quantidade_de_vagas = caronas[email_motorista][id]['Vagas'] - 1
-                                                caronas[email_motorista][id]['Vagas'] = quantidade_de_vagas
-                                                if login not in historico_passageiros:
-                                                        historico_passageiros[login] = dict()
-                                                num_reserva_passageiro = len(historico_passageiros[login]) + 1
-                                                historico_passageiros[login][num_reserva_passageiro] = [caronas[email_motorista][id]['Data'], caronas[email_motorista][id]['Motorista'], caronas[email_motorista][id]['Valor']]
-                                                print('\nReserva efetuada com sucesso!')
-                                                return
-                                        else:
-                                                print('\nQue pena, não há mais vagas!')
-                                                return
-        else:
-                print('\nNenhuma carona oferecida por esse motorista!')
-                return
-        
-def cancelar_reserva(caronas,login,usuarios):
-        reserva_encontrada = False
-        print('\nDigite "voltar" a qualquer momento para retornar ao menu')
-        email_cancelar = input('Digite o email do motorista o qual você deseja cancelar carona: ').lower()
-        if email_cancelar == 'voltar':
-                return
-        data_carona_cancelar = input('Digite a data da carona: (dd/mm/aaaa) ').lower()
-        if data_carona_cancelar == 'voltar':
-                return
-        if len(data_carona_cancelar) < 9 or data_carona_cancelar[2] != '/' and data_carona_cancelar[5] != '/':
+
+        if len(data_carona) < 9 or data_carona[2] != '/' or data_carona[5] != '/':
                 print('\nFormato de data inválida!')
-        else:
-                if email_cancelar in caronas:
-                        for id in caronas[email_cancelar]:
-                                if data_carona_cancelar == caronas[email_cancelar][id]['Data']:
-                                        for reserva in caronas[email_cancelar][id]['Reservas']:
-                                                if caronas[email_cancelar][id]['Reservas'][reserva] == usuarios[login]['nome']:
-                                                        reserva_encontrada = True
-                                                        reserva_a_deletar = reserva
-                        if reserva_encontrada:
-                                caronas[email_cancelar][id]['Reservas'].pop(reserva_a_deletar)
-                                caronas[email_cancelar][id]['Vagas'] += 1
-                                print('\nReserva cancelada com sucesso!')
-                        else:
-                                print('\nVocê não tem reserva nessa carona!\n')
-                                sub_menu = 'start'
+                return
+
+        if email_motorista not in caronas:
+                print('Nenhuma carona oferecida por esse motorista!')
+                return
+
+        carona_encontrada = None
+        for id_carona in caronas[email_motorista]:
+                c = caronas[email_motorista][id_carona]
+                if c['Data'] == data_carona:
+                        carona_encontrada = c
+                        break
+
+        if carona_encontrada is None:
+                print('Nenhuma carona encontrada nessa data para esse motorista.')
+                return
+
+        if carona_encontrada['Vagas'] <= 0:
+                print('Não há vagas disponíveis nessa carona.')
+                return
+
+        email_usuario = login
+        nome_usuario = usuarios[login]['nome']
+
+        reservas_dict = carona_encontrada.get('Reservas', {})
+        if not isinstance(reservas_dict, dict):
+                reservas_dict = {}
+
+        if email_usuario in reservas_dict:
+                print('Você já tem uma reserva nesta carona.')
+                return
+
+        reservas_dict[email_usuario] = nome_usuario
+        carona_encontrada['Reservas'] = reservas_dict
+
+        carona_encontrada['Vagas'] -= 1
+
+        print('Reserva feita com sucesso!')
+
+        salvar_caronas(caronas,arquivo_caronas)
+
+
+def cancelar_reserva(caronas, login, usuarios, arquivo_caronas):
+        print('\nDigite "voltar" para cancelar a operação.')
+        email_motorista = input('Digite o email do motorista para cancelar reserva: ').lower()
+        if email_motorista == 'voltar':
+                return
+
+        data_carona = input('Digite a data da carona (dd/mm/aaaa): ')
+        if data_carona == 'voltar':
+                return
+
+        if email_motorista not in caronas:
+                print('\nMotorista não encontrado.')
+                return
+
+        carona_encontrada = None
+        for id_carona in caronas[email_motorista]:
+                c = caronas[email_motorista][id_carona]
+                if c['Data'] == data_carona:
+                        carona_encontrada = c
+                        break
+
+        if carona_encontrada is None:
+                print('\nCarona não encontrada na data indicada.')
+                return
+
+        nome_usuario = usuarios[login]['nome']
+
+        reservas = carona_encontrada['Reservas']
+
+        # Verifica se é dict ou str sem usar isinstance
+        if type(reservas) == dict:
+                reservas_lista = []
+                for email, nome in reservas.items():
+                        reservas_lista.append(f"{email}:{nome}")
+        elif type(reservas) == str:
+                if reservas.strip() == '':
+                        reservas_lista = []
                 else:
-                        print('Nenhuma carona oferecida por esse motorista!')
-                        sub_menu = 'start'
+                        reservas_lista = reservas.strip().split()
+        else:
+                reservas_lista = []
+
+        reserva_para_remover = None
+        for reserva in reservas_lista:
+                partes = reserva.split(':')
+                if len(partes) == 2 and partes[1] == nome_usuario:
+                        reserva_para_remover = reserva
+                        break
+
+        if reserva_para_remover is None:
+                print('\nVocê não tem reserva nessa carona!')
+                return
+
+        reservas_lista.remove(reserva_para_remover)
+
+        # Montar a string reservas sem usar join
+        reservas_str = ''
+        for r in reservas_lista:
+                reservas_str += r + ' '
+
+        # Retirar espaço extra no final
+        reservas_str = reservas_str.strip()
+
+        carona_encontrada['Reservas'] = reservas_str
+        carona_encontrada['Vagas'] += 1
+
+        print('\nReserva cancelada com sucesso!')
+
+        with open(arquivo_caronas, 'w') as f:
+                for motorista in caronas:
+                        for id_c in caronas[motorista]:
+                                c = caronas[motorista][id_c]
+                                linha = f"{motorista},{c['Motorista']},{c['Origem']},{c['Destino']},{c['Data']},{c['Horário']},{c['Vagas']},{c['Valor']},{c['Reservas']}\n"
+                                f.write(linha)
 
 def remover_carona(caronas,login,):
         carona_a_remover = False
@@ -387,6 +478,10 @@ def logout():
 
 def importar_usuarios(usuarios):
 
+        pasta_usuarios = 'E:\\Algorítimo e Lógica de programação\\Phyton\\usuarios'
+        if not os.path.exists(pasta_usuarios):
+                os.makedirs(pasta_usuarios)
+
         with open('E:\\Algorítimo e Lógica de programação\\Phyton\\usuarios\\usuarios.txt', 'r') as cadastros:
                 for linha in cadastros:
                         email, nome, senha = linha.strip().split(',')
@@ -432,15 +527,15 @@ def salvar_relatorio(caronas,login):
 
         salvar = input('\nDeseja salvar o relatório? (S)(N) ').lower()
 
-        pasta = 'E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio'
-        if not os.path.exists(pasta):
-                os.makedirs(pasta)
+        pasta_relatorio = 'E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio'
+        if not os.path.exists(pasta_relatorio):
+                os.makedirs(pasta_relatorio)
 
         if salvar == 's':
                 total_geral = 0
                 total = 0
                 
-                with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatorio.txt', 'w') as arquivo:
+                with open('E:\\Algorítimo e Lógica de programação\\Phyton\\relatorio\\relatorio.txt', 'a') as arquivo:
 
                         arquivo.write(f'\n Olá, {login}, estas são suas caronas cadastradas:\n')
                         for carona_id in caronas[login]:
@@ -464,3 +559,56 @@ def salvar_relatorio(caronas,login):
 
                         arquivo.write(f'Total a receber por caronas oferecidas: R$ {total_geral:.2f}\n')
                         print('Relatório salvo com sucesso!')
+
+def importar_caronas(arquivo_caronas):
+        import os
+        caronas = dict()
+        pasta_caronas = 'E:\\Algorítimo e Lógica de programação\\Phyton\\caronas'
+
+        if os.path.exists(pasta_caronas):
+                with open(arquivo_caronas, 'r') as f:
+                        for linha in f:
+                                partes = linha.strip().split(',')
+
+                                if len(partes) < 9:
+                                        continue
+
+                                email = partes[0]
+                                nome = partes[1]
+                                origem = partes[2]
+                                destino = partes[3]
+                                data = partes[4]
+                                horario = partes[5]
+                                vagas = int(partes[6])
+                                valor = float(partes[7])
+                                reservas_str = partes[8].strip()
+
+                                reservas = {}
+                                if reservas_str:
+                                        pares = reservas_str.split("|")
+                                        for par in pares:
+                                                if ':' in par:
+                                                        email_res, nome_res = par.split(":")
+                                                        reservas[email_res] = nome_res
+
+                                nova_carona = {
+                                'Motorista': nome,
+                                'Origem': origem,
+                                'Destino': destino,
+                                'Data': data,
+                                'Horário': horario,
+                                'Vagas': vagas,
+                                'Valor': valor,
+                                'Reservas': reservas
+                                }
+
+                                if email not in caronas:
+                                        caronas[email] = dict()
+
+                                id_carona = f'carona{len(caronas[email]) + 1}'
+                                caronas[email][id_carona] = nova_carona
+
+        else:
+                print('Arquivo de caronas não encontrado. Será criado ao cadastrar uma nova carona.')
+
+        return caronas

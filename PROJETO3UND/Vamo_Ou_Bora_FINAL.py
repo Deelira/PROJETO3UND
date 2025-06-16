@@ -1,7 +1,6 @@
 import funcoes_usuarios
 
 usuarios = dict()
-caronas = dict()
 sugestoes = dict()
 historico_passageiros = dict()
 menu_validos = ['0', '1', '2', '3', 'voltar', 'sair', 'start']
@@ -10,29 +9,8 @@ menu = 'start'
 login = None
 senha = None
 arquivo_usuarios = 'E:\\Algorítimo e Lógica de programação\\Phyton\\usuarios\\usuarios.txt'
-
-caronas['3deelira@gmail.com'] = {
-                        'Carona1' : {
-                        'Motorista' : 'alisson lira',
-                        'Origem' : 'cajazeiras',
-                        'Destino': 'joão pessoa',
-                        'Data' : '20/06/2025',
-                        'Horário': '16:30',
-                        'Vagas' : 3,
-                        'Valor' : 100.00,
-                        'Reservas' : dict()
-                    }}
-caronas['jeff@gmail.com'] = {
-                        'Carona1' : {
-                        'Motorista' : 'jefferson lira',
-                        'Origem' : 'cajazeiras',
-                        'Destino': 'joão pessoa',
-                        'Data' : '20/06/2025',
-                        'Horário': '18:30',
-                        'Vagas' : 3,
-                        'Valor' : 100.00,
-                        'Reservas' : dict()
-                    }}
+arquivo_caronas = 'E:\\Algorítimo e Lógica de programação\\Phyton\\caronas\\caronas.txt'
+caronas = funcoes_usuarios.importar_caronas(arquivo_caronas)
 
 while menu == 'start':
     print('\n \n======================== M E N U ========================\n')
@@ -79,19 +57,19 @@ while menu == 'start':
                 sub_menu = (input('Digite a opção desejada: ')).lower()
 
                 if sub_menu == '1':
-                    funcoes_usuarios.cadastrar_carona(caronas,usuarios,login)
+                    funcoes_usuarios.cadastrar_carona(caronas,usuarios,login,arquivo_caronas)
 
                 if sub_menu == '2':
-                    funcoes_usuarios.listar_caronas(caronas)
+                    funcoes_usuarios.listar_caronas(arquivo_caronas)
 
                 if sub_menu == '3':
                     funcoes_usuarios.bucar_por_origem(caronas)
 
                 if sub_menu == '4':
-                    funcoes_usuarios.reservar_vaga(caronas,login,historico_passageiros,usuarios)
+                    funcoes_usuarios.reservar_vaga(caronas,login,usuarios,arquivo_caronas)
 
                 if sub_menu == '5':
-                    funcoes_usuarios.cancelar_reserva(caronas,login,usuarios)
+                    funcoes_usuarios.cancelar_reserva(caronas,login,usuarios,arquivo_caronas)
 
                 if sub_menu == '6':
                     funcoes_usuarios.remover_carona(caronas,login)
